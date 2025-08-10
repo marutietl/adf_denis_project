@@ -1,0 +1,61 @@
+{
+	"name": "Subcategories_DF",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Subcategories_B",
+						"type": "DatasetReference"
+					},
+					"name": "SubcategoriesB"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Subcategory_S",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          SubCategoryKey as string,",
+				"          CategoryKey as string,",
+				"          {SubCategory Name} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SubcategoriesB",
+				"SubcategoriesB derive(DCategoryKey = regexReplace(CategoryKey, '[^0-9]', '')) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          SubCategoryKey,",
+				"          CategoryKey = DCategoryKey,",
+				"          {SubCategory Name}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     filePattern:'subcategory_s.csv',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

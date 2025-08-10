@@ -1,0 +1,9 @@
+{
+	"name": "denisprojectadfv2",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "3a4a4e0a-bab9-4edf-ad21-b753563d22bc",
+		"tenantId": "dacbf9fd-32bb-4b69-82b2-cafb22a84a6f"
+	}
+}

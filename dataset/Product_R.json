@@ -1,0 +1,16 @@
+{
+	"name": "Product_R",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MySql2ADFLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "MySqlTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "product"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

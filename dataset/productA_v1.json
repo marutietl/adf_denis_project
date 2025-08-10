@@ -1,0 +1,17 @@
+{
+	"name": "productA_v1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "silver2goldsqldb",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "",
+			"table": "productA_Tb"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

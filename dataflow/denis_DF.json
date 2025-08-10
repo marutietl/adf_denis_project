@@ -1,0 +1,299 @@
+{
+	"name": "denis_DF",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Category_S",
+						"type": "DatasetReference"
+					},
+					"name": "getCategory"
+				},
+				{
+					"dataset": {
+						"referenceName": "Subcategory_S",
+						"type": "DatasetReference"
+					},
+					"name": "getSubcategory"
+				},
+				{
+					"dataset": {
+						"referenceName": "Geography_S",
+						"type": "DatasetReference"
+					},
+					"name": "getGeography"
+				},
+				{
+					"dataset": {
+						"referenceName": "SalesRep_S",
+						"type": "DatasetReference"
+					},
+					"name": "getsalesrep"
+				},
+				{
+					"dataset": {
+						"referenceName": "Product_S",
+						"type": "DatasetReference"
+					},
+					"name": "getproduct"
+				},
+				{
+					"dataset": {
+						"referenceName": "Sales_S",
+						"type": "DatasetReference"
+					},
+					"name": "getsales"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Denis_G",
+						"type": "DatasetReference"
+					},
+					"name": "denisgoldadls"
+				},
+				{
+					"dataset": {
+						"referenceName": "sql_denis_G",
+						"type": "DatasetReference"
+					},
+					"name": "denisgoldsqldb"
+				},
+				{
+					"dataset": {
+						"referenceName": "productA_v1",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "categorysubcategory"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "productcategorysubcategory"
+				},
+				{
+					"name": "productcategorysubcategorydata"
+				},
+				{
+					"name": "salessalesrep"
+				},
+				{
+					"name": "salessalerepdata"
+				},
+				{
+					"name": "salessalesrepproduct"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "additionalcolumns"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "rank1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CategoryKey as short,",
+				"          Category as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> getCategory",
+				"source(output(",
+				"          SubCategoryKey as short,",
+				"          CategoryKey as short,",
+				"          {SubCategory Name} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> getSubcategory",
+				"source(output(",
+				"          GeoID as short,",
+				"          Country as string,",
+				"          Town as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> getGeography",
+				"source(output(",
+				"          SalesRepID as short,",
+				"          {Sales Rep Name} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> getsalesrep",
+				"source(output(",
+				"          ProductID as short,",
+				"          SubCategoryKey as short,",
+				"          Color as string,",
+				"          ProductName as string,",
+				"          RetailPrice as double,",
+				"          StandardCost as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> getproduct",
+				"source(output(",
+				"          fSalesPrimaryKey as integer,",
+				"          ProductID as short,",
+				"          SalesRepID as short,",
+				"          Date as string,",
+				"          Units as short,",
+				"          PercentOfStandardCost as double,",
+				"          RevenueDiscount as double,",
+				"          country as string,",
+				"          state as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> getsales",
+				"getCategory, getSubcategory join(getCategory@CategoryKey == getSubcategory@CategoryKey,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> categorysubcategory",
+				"categorysubcategory select(mapColumn(",
+				"          SubCategoryKey,",
+				"          {SubCategory Name},",
+				"          Category",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"getproduct, categorysubcategory join(getproduct@SubCategoryKey == getSubcategory@SubCategoryKey,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> productcategorysubcategory",
+				"productcategorysubcategory select(mapColumn(",
+				"          ProductID,",
+				"          Color,",
+				"          ProductName,",
+				"          Category,",
+				"          {SubCategory Name},",
+				"          RetailPrice,",
+				"          StandardCost",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> productcategorysubcategorydata",
+				"getsales, getsalesrep join(getsales@SalesRepID == getsalesrep@SalesRepID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> salessalesrep",
+				"salessalesrep select(mapColumn(",
+				"          fSalesPrimaryKey,",
+				"          ProductID,",
+				"          SalesRepID = getsales@SalesRepID,",
+				"          Date,",
+				"          Units,",
+				"          PercentOfStandardCost,",
+				"          RevenueDiscount,",
+				"          country,",
+				"          state,",
+				"          {Sales Rep Name}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> salessalerepdata",
+				"salessalerepdata, productcategorysubcategorydata join(salessalerepdata@ProductID == productcategorysubcategorydata@ProductID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> salessalesrepproduct",
+				"salessalesrepproduct select(mapColumn(",
+				"          fSalesPrimaryKey,",
+				"          ProductID = salessalerepdata@ProductID,",
+				"          SalesRepID,",
+				"          Date,",
+				"          Units,",
+				"          PercentOfStandardCost,",
+				"          RevenueDiscount,",
+				"          country,",
+				"          state,",
+				"          {Sales Rep Name},",
+				"          Color,",
+				"          ProductName,",
+				"          Category,",
+				"          {SubCategory Name},",
+				"          RetailPrice,",
+				"          StandardCost",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 derive(Total_Revenue = round(RetailPrice*Units,2),",
+				"          Total_cost = round(StandardCost*Units,2)) ~> additionalcolumns",
+				"additionalcolumns derive(gross_profit = Total_Revenue-Total_cost) ~> derivedColumn1",
+				"derivedColumn1 aggregate(groupBy(ProductName),",
+				"     Total_gross_profit = round(sum(gross_profit),2)) ~> aggregate1",
+				"aggregate1 rank(desc(Total_gross_profit, true),",
+				"     output(Rank as long)) ~> rank1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     filePattern:'denis_G.csv',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          fSalesPrimaryKey,",
+				"          ProductID,",
+				"          SalesRepID,",
+				"          Date,",
+				"          Units,",
+				"          PercentOfStandardCost,",
+				"          RevenueDiscount,",
+				"          country,",
+				"          state,",
+				"          {Sales Rep Name},",
+				"          Color,",
+				"          ProductName,",
+				"          Category,",
+				"          {SubCategory Name},",
+				"          RetailPrice,",
+				"          StandardCost,",
+				"          Total_Revenue,",
+				"          Total_cost,",
+				"          gross_profit",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> denisgoldadls",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> denisgoldsqldb",
+				"rank1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}

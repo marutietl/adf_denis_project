@@ -1,0 +1,17 @@
+{
+	"name": "sql_denis_G",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "silver2goldsqldb",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "",
+			"table": "denis_tb"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
