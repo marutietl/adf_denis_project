@@ -1,0 +1,24 @@
+{
+	"name": "asql2adfkeyvaultls",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "denisdbserver1.database.windows.net",
+			"database": "denisDB",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "denisdb",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "adfkv_ls",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "denisdb",
+				"secretVersion": "05caa9fcbf05491eb40093886a8067e7"
+			}
+		}
+	}
+}
