@@ -1,0 +1,10 @@
+{
+	"name": "adfkv_ls",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://deniskeyvaultv1.vault.azure.net/"
+		}
+	}
+}
