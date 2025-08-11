@@ -3,7 +3,8 @@
 	"properties": {
 		"parameters": {
 			"db_name": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "denis_db"
 			}
 		},
 		"annotations": [],
