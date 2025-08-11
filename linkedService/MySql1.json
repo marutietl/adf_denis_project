@@ -1,0 +1,34 @@
+{
+	"name": "MySql1",
+	"properties": {
+		"parameters": {
+			"db_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "MySql",
+		"typeProperties": {
+			"server": "localhost",
+			"port": 3306,
+			"database": "@{linkedService().db_name}",
+			"username": "root",
+			"sslMode": 1,
+			"useSystemTrustStore": 0,
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "adfkv_ls",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "mysqldb",
+				"secretVersion": "f6478084991346ed93bdc876f0371156"
+			},
+			"driverVersion": "v2"
+		},
+		"connectVia": {
+			"referenceName": "SelfhostedintegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
