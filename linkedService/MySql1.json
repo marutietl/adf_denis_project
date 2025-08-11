@@ -3,8 +3,7 @@
 	"properties": {
 		"parameters": {
 			"db_name": {
-				"type": "string",
-				"defaultValue": "@dataset().parameters.database_name"
+				"type": "string"
 			}
 		},
 		"annotations": [],
